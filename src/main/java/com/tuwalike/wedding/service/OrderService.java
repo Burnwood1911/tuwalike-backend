@@ -37,7 +37,7 @@ public class OrderService {
                 .put("api_to", "TigoPesa")
                 .put("amount", 1000)
                 .put("product", "Wedding Card")
-                .put("callback", "https://tuwalike.alexrossi.xyz/api/v1/orders/callback")
+                .put("callback", "https://popo.alexrossi.xyz/api/v1/orders/callback")
                 .put("hash", MD5Generator.generateHash("tualike"))
                 .put("codex", "3342wfd")
                 .put("user", "tualike")
