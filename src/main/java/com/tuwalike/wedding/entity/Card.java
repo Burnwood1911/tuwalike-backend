@@ -20,7 +20,24 @@ public class Card {
 
     private String image;
 
+    @Lob
+    private String imageBase;
+
     private Integer price;
+
+    private Integer nameX;
+
+    private Integer nameY;
+
+    private String nameColor;
+
+    private Integer typeX;
+
+    private Integer typeY;
+
+    private String typeColor;
+
+    private String fontName;
 
     @OneToOne(cascade = CascadeType.ALL)
     private CardCategory cardCategory;

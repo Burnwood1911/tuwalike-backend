@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tuwalike.wedding.models.GeneralResponse;
 import com.tuwalike.wedding.models.requests.CreateEventRequest;
+import com.tuwalike.wedding.models.requests.DispatchRequest;
 import com.tuwalike.wedding.models.requests.ScanRequest;
 import com.tuwalike.wedding.models.requests.UpdateDeliveryRequest;
 import com.tuwalike.wedding.service.EventService;
@@ -42,6 +43,14 @@ public class EventController {
     public ResponseEntity<GeneralResponse> scan(@RequestBody ScanRequest request) {
 
         GeneralResponse result = eventService.scan(request);
+
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getStatusCode()));
+    }
+
+    @PostMapping("dispatch")
+    public ResponseEntity<GeneralResponse> scan(@RequestBody DispatchRequest request) {
+
+        GeneralResponse result = eventService.dispatch(request);
 
         return new ResponseEntity<>(result, HttpStatus.valueOf(result.getStatusCode()));
     }

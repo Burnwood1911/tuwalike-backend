@@ -2,6 +2,7 @@ package com.tuwalike.wedding.controller;
 
 import com.tuwalike.wedding.models.GeneralResponse;
 import com.tuwalike.wedding.models.requests.CreateCardRequest;
+import com.tuwalike.wedding.models.requests.GenerateCardRequest;
 import com.tuwalike.wedding.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,14 @@ public class CardController {
     public ResponseEntity<GeneralResponse> deleteCard(@PathVariable Integer id) {
 
         GeneralResponse result = cardService.deleteCard(id);
+
+        return new ResponseEntity<>(result, HttpStatus.valueOf(result.getStatusCode()));
+    }
+
+    @PostMapping("generate")
+    public ResponseEntity<GeneralResponse> generate(@RequestBody GenerateCardRequest request) throws Exception {
+
+        GeneralResponse result = cardService.generate(request);
 
         return new ResponseEntity<>(result, HttpStatus.valueOf(result.getStatusCode()));
     }

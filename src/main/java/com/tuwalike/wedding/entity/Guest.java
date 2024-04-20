@@ -30,4 +30,6 @@ public class Guest {
 
     private String qr;
 
+    private String finalImage;
+
 }

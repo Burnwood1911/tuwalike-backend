@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.tuwalike.wedding.models.NetworkResponse;
 
 import lombok.RequiredArgsConstructor;
+import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -57,6 +58,24 @@ public class NetworkUtil {
                 .url(url)
                 .post(body)
                 .headers(Headers.of(headers))
+                .build();
+
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            boolean isSuccess = HttpStatus.valueOf(response.code()).is2xxSuccessful();
+            return NetworkResponse.builder().isSuccess(isSuccess).code(response.code())
+                    .responseBody(response.body().string()).build();
+        } catch (IOException e) {
+
+            return NetworkResponse.builder().isSuccess(false).code(001)
+                    .responseBody(String.format("Request timed out with error: %s", e.getMessage())).build();
+        }
+    }
+
+    public NetworkResponse postForm(String url, RequestBody payload) {
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(payload)
                 .build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {

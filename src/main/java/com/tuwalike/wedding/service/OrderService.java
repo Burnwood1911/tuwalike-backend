@@ -42,7 +42,7 @@ public class OrderService {
                 .put("codex", "3342wfd")
                 .put("user", "tualike")
                 .put("mobileNo", "255718261948")
-                .put("reference", UUID.randomUUID().toString());
+                .put("reference", "INV" + UUID.randomUUID().toString().split("-")[0]);
 
         String URL = String.format("https://vodaapi.evmak.com/test/");
 
