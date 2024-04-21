@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.UUID;
+
 import javax.imageio.ImageIO;
 
 @Service
@@ -89,7 +91,8 @@ public class ImageUtil {
         ImageIO.write(inputImage, "png", baos);
         byte[] imageBytes = baos.toByteArray();
 
-        String filename = guest.getName().replaceAll(" ", "-") + ".png";
+        String unique = UUID.randomUUID().toString().split("-")[0];
+        String filename = guest.getName().replaceAll(" ", "-") + unique + ".png";
         String url = fileUploader.upload(imageBytes, filename);
 
         // fileStorageService.storeFile(imageBytes, filename);
