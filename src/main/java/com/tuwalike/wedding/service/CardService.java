@@ -33,6 +33,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import java.io.*;
@@ -55,6 +58,8 @@ public class CardService {
     private final ImageBBService imageBBService;
 
     private final FileUploader fileUploader;
+
+    private Executor asyncExecutor;
 
     public GeneralResponse getCards() {
 
@@ -134,7 +139,40 @@ public class CardService {
         return GeneralResponse.builder().statusCode(200).message("success").build();
     }
 
-    public GeneralResponse generate(GenerateCardRequest request) throws Exception {
+    public GeneralResponse generate(GenerateCardRequest request) {
+
+        Optional<Event> event = eventRepository.findById(request.getEventId());
+        if (!event.isPresent()) {
+            return GeneralResponse.builder().statusCode(500).message("event not found").build();
+        }
+
+        Optional<Card> card = cardRepository.findById(event.get().getCardId());
+        if (!card.isPresent()) {
+            return GeneralResponse.builder().statusCode(500).message("card not found").build();
+        }
+
+        List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
+
+        List<CompletableFuture<Void>> futures = guests.stream().map(g -> CompletableFuture.runAsync(() -> {
+            try {
+                String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
+                String out = imageUtil.encode(qrImage, card.get().getImageBase(), card.get(), g);
+                g.setFinalImage(out);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, asyncExecutor)).collect(Collectors.toList());
+
+        // Wait for all async tasks to complete
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        // Now save all guests at once if your JPA provider supports it
+        guestRepository.saveAll(guests);
+
+        return GeneralResponse.builder().statusCode(200).message("success").build();
+    }
+
+    public GeneralResponse generateOld(GenerateCardRequest request) throws Exception {
 
         Optional<Event> event = eventRepository.findById(request.getEventId());
 

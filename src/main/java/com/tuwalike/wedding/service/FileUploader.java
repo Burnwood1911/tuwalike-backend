@@ -22,7 +22,7 @@ public class FileUploader {
             // credentials.
             MinioClient minioClient = MinioClient.builder()
                     .endpoint("https://minio.alexrossi.xyz")
-                    .credentials("Ppw6g3wGeAgPt1QEMeJs", "SEbMikbhURym5eJ5FFSz1Pa87CQg5t94mZT29Vec")
+                    .credentials("HifXVDNIkBdgrwggeWgq", "CMI4Eh9fOl0LDGvg6tATfIqjt4GLo0g3uQUT15GL")
                     .build();
 
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pngBytes);
