@@ -152,14 +152,10 @@ public class CardService {
         }
 
         List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
-        log.info("{}", guests.size());
-
-        log.info("{}", asyncExecutor != null);
 
         List<CompletableFuture<Void>> futures = guests.stream().map(g -> CompletableFuture.runAsync(() -> {
             try {
                 String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
-                log.info(qrImage);
                 String out = imageUtil.encode(qrImage, card.get().getImageBase(), card.get(), g);
                 g.setFinalImage(out);
             } catch (Exception e) {
