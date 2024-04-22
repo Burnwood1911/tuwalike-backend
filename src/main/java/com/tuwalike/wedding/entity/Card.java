@@ -39,7 +39,6 @@ public class Card {
 
     private String fontName;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private CardCategory cardCategory;
+    private int cardCategory;
 
 }

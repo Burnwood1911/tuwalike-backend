@@ -2,11 +2,9 @@ package com.tuwalike.wedding.service;
 
 import java.util.Map;
 
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.tuwalike.wedding.config.GsonConfig;
-import com.tuwalike.wedding.models.NetworkResponse;
 import com.tuwalike.wedding.models.message.Messages;
 import com.tuwalike.wedding.utils.NetworkUtil;
 

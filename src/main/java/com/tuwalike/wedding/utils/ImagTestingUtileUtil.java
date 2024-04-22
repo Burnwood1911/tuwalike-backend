@@ -11,24 +11,40 @@ import lombok.RequiredArgsConstructor;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 
-@Service
-@RequiredArgsConstructor
-public class ImageUtil {
+public class ImagTestingUtileUtil {
 
-    private final FileUploader fileUploader;
+    public static int calculateStringCenterPosition(int axisStart, int axisEnd, int stringLength, int charWidth) {
+        int axisWidth = axisEnd - axisStart; // Calculate the total width of the x-axis
+        int axisMidpoint = axisStart + axisWidth / 2; // Find the midpoint of the x-axis
 
-    public String encode(String base64Qr, String inputPath, Card card, Guest guest) throws Exception {
+        int stringWidth = stringLength * charWidth; // Calculate the total width of the string
+        int stringStart = axisMidpoint - stringWidth / 2; // Calculate the starting position of the string to center it
+
+        return stringStart; // This is the x coordinate where the string should start to be centered
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        String qrk = QRCodeGenerator.generateQRCodeImageAsBase64("kapa", 250, 250);
+
+        String filePatht = "uploads/text.txt"; // Assuming the file is in the current working directory
+        String content = new String(Files.readAllBytes(Paths.get(filePatht)));
+
         // Decode the base64 String of the QR code to a BufferedImage
-        byte[] qrImageBytes = Base64.getDecoder().decode(base64Qr);
+        byte[] qrImageBytes = Base64.getDecoder().decode(qrk);
         ByteArrayInputStream baisQR = new ByteArrayInputStream(qrImageBytes);
         BufferedImage qrImage = ImageIO.read(baisQR);
 
         // Decode the base64 String of the input image to a BufferedImage
-        byte[] inputImageBytes = Base64.getDecoder().decode(inputPath);
+        byte[] inputImageBytes = Base64.getDecoder().decode(content);
         // Path path = Paths.get(inputPath);
         // byte[] inputImageBytes = Files.readAllBytes(path);
         ByteArrayInputStream baisInput = new ByteArrayInputStream(inputImageBytes);
@@ -58,11 +74,11 @@ public class ImageUtil {
         g2dInputImage.drawImage(qrImageResized, x, y, null);
 
         // Add white text "SINGLE" at coordinates (100,200)
-        g2dInputImage.setColor(Color.decode(card.getTypeColor()));
+        g2dInputImage.setColor(Color.black);
 
         // Assuming you've placed the font file in 'src/main/resources/fonts' and it's
         // named 'YourGoogleFont-Regular.ttf'
-        Font myCustomFont = CustomFontUtil.loadFont("fonts/GreatVibes-Regular.ttf", 50f);
+        Font myCustomFont = CustomFontUtil.loadFont("fonts/GreatVibes-Regular.ttf", 60f);
         g2dInputImage.setFont(myCustomFont);
         // g2dInputImage.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font
         // here; you might need to adjust size
@@ -71,12 +87,10 @@ public class ImageUtil {
         // card.getTypeY());
 
         // draw name
-        String fontName = "fonts/" + card.getFontName() + ".ttf";
-        Font myCustomFontt = CustomFontUtil.loadFont(fontName, 70f);
-        g2dInputImage.setFont(myCustomFontt);
-        g2dInputImage.setColor(Color.decode(card.getNameColor()));
+        g2dInputImage.setFont(myCustomFont);
+        g2dInputImage.setColor(Color.black);
 
-        String name = guest.getName();
+        String name = "Alex Paul Rossi";
 
         int axisStart = 160;
         int axisEnd = 930;
@@ -85,7 +99,7 @@ public class ImageUtil {
 
         int stringStartPosition = calculateStringCenterPosition(axisStart, axisEnd, stringLength, charWidth);
 
-        g2dInputImage.drawString(name, stringStartPosition, card.getNameY());
+        g2dInputImage.drawString(name, stringStartPosition, 440);
 
         g2dInputImage.dispose();
 
@@ -94,30 +108,23 @@ public class ImageUtil {
         ImageIO.write(inputImage, "png", baos);
         byte[] imageBytes = baos.toByteArray();
 
-        String unique = UUID.randomUUID().toString().split("-")[0];
-        String filename = guest.getName().replaceAll(" ", "-") + unique + ".png";
-        String url = fileUploader.upload(imageBytes, filename);
+        Path uploadsDir = Paths.get("uploads");
+        Path filePath = uploadsDir.resolve("kappa.png");
 
-        // fileStorageService.storeFile(imageBytes, filename);
-        // return fileStorageService.generateFileUrl(filename);
+        try {
+            // Ensure the directory exists
+            if (Files.notExists(uploadsDir)) {
+                Files.createDirectories(uploadsDir);
+            }
 
-        // IMAGEBB SERIVCE
+            // Writing the byte array to a file
+            Files.write(filePath, imageBytes, StandardOpenOption.CREATE);
 
-        // ImageUploadResponse imageUploadResponse =
-        // imageBBService.upload(Base64.getEncoder().encodeToString(imageBytes));
+            System.out.println("File saved successfully.");
+        } catch (IOException e) {
+            System.err.println("Error saving PNG file: " + e.getMessage());
+        }
 
-        // return imageUploadResponse.getData().getImage().getUrl();
-        return url;
-    }
-
-    public static int calculateStringCenterPosition(int axisStart, int axisEnd, int stringLength, int charWidth) {
-        int axisWidth = axisEnd - axisStart; // Calculate the total width of the x-axis
-        int axisMidpoint = axisStart + axisWidth / 2; // Find the midpoint of the x-axis
-
-        int stringWidth = stringLength * charWidth; // Calculate the total width of the string
-        int stringStart = axisMidpoint - stringWidth / 2; // Calculate the starting position of the string to center it
-
-        return stringStart; // This is the x coordinate where the string should start to be centered
     }
 
 }

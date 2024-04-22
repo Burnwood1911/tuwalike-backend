@@ -1,12 +1,10 @@
 package com.tuwalike.wedding.service;
 
-import com.google.zxing.WriterException;
 import com.tuwalike.wedding.entity.Card;
 import com.tuwalike.wedding.entity.CardCategory;
 import com.tuwalike.wedding.entity.Event;
 import com.tuwalike.wedding.entity.Guest;
 import com.tuwalike.wedding.models.GeneralResponse;
-import com.tuwalike.wedding.models.imageupload.ImageUploadResponse;
 import com.tuwalike.wedding.models.requests.CreateCardRequest;
 import com.tuwalike.wedding.models.requests.GenerateCardRequest;
 import com.tuwalike.wedding.repository.CardCategoryRepository;
@@ -17,18 +15,9 @@ import com.tuwalike.wedding.utils.ImageUtil;
 import com.tuwalike.wedding.utils.QRCodeGenerator;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -37,12 +26,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import java.io.*;
-
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CardService {
 
     private final CardRepository cardRepository;
@@ -54,8 +39,6 @@ public class CardService {
     private final EventRepository eventRepository;
 
     private final ImageUtil imageUtil;
-
-    private final ImageBBService imageBBService;
 
     private final FileUploader fileUploader;
 
@@ -118,7 +101,7 @@ public class CardService {
             Optional<CardCategory> cardCategory = cardCategoryRepository.findById(request.getCategoryId());
 
             if (cardCategory.isPresent()) {
-                card.setCardCategory(cardCategory.get());
+                card.setCardCategory(cardCategory.get().getId());
             } else {
                 return GeneralResponse.builder().statusCode(500).message("Invalid card category").build();
             }
@@ -139,37 +122,80 @@ public class CardService {
         return GeneralResponse.builder().statusCode(200).message("success").build();
     }
 
-    public GeneralResponse generate(GenerateCardRequest request) {
+    // public GeneralResponse generate(GenerateCardRequest request) {
 
+    // Optional<Event> event = eventRepository.findById(request.getEventId());
+    // if (!event.isPresent()) {
+    // return GeneralResponse.builder().statusCode(500).message("event not
+    // found").build();
+    // }
+
+    // Optional<Card> card = cardRepository.findById(event.get().getCardId());
+    // if (!card.isPresent()) {
+    // return GeneralResponse.builder().statusCode(500).message("card not
+    // found").build();
+    // }
+
+    // List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
+
+    // List<CompletableFuture<Void>> futures = guests.stream().filter(p ->
+    // p.getFinalImage() == null)
+    // .map(g -> CompletableFuture.runAsync(() -> {
+    // try {
+    // String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250,
+    // 250);
+    // String out = imageUtil.encode(qrImage, card.get().getImageBase(), card.get(),
+    // g);
+    // g.setFinalImage(out);
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // }, asyncExecutor)).collect(Collectors.toList());
+
+    // // Wait for all async tasks to complete
+    // CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+    // // Now save all guests at once if your JPA provider supports it
+    // guestRepository.saveAll(guests);
+
+    // return GeneralResponse.builder().statusCode(200).message("success").build();
+    // }
+
+    public GeneralResponse generate(GenerateCardRequest request) {
         Optional<Event> event = eventRepository.findById(request.getEventId());
         if (!event.isPresent()) {
-            return GeneralResponse.builder().statusCode(500).message("event not found").build();
+            return GeneralResponse.builder().statusCode(500).message("Event not found").build();
         }
 
         Optional<Card> card = cardRepository.findById(event.get().getCardId());
         if (!card.isPresent()) {
-            return GeneralResponse.builder().statusCode(500).message("card not found").build();
+            return GeneralResponse.builder().statusCode(500).message("Card not found").build();
         }
 
         List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
 
-        List<CompletableFuture<Void>> futures = guests.stream().map(g -> CompletableFuture.runAsync(() -> {
-            try {
-                String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
-                String out = imageUtil.encode(qrImage, card.get().getImageBase(), card.get(), g);
-                g.setFinalImage(out);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, asyncExecutor)).collect(Collectors.toList());
+        // Call processGuestList asynchronously
+        processGuestList(guests, card.get());
 
-        // Wait for all async tasks to complete
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        // Return response immediately
+        return GeneralResponse.builder().statusCode(202).message("Processing started").build();
+    }
 
-        // Now save all guests at once if your JPA provider supports it
-        guestRepository.saveAll(guests);
+    @Async("asyncExecutor")
+    public void processGuestList(List<Guest> guests, Card card) {
+        List<CompletableFuture<Void>> futures = guests.stream().filter(p -> p.getFinalImage() == null)
+                .map(g -> CompletableFuture.runAsync(() -> {
+                    try {
+                        String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
+                        String out = imageUtil.encode(qrImage, card.getImageBase(), card, g);
+                        g.setFinalImage(out);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, asyncExecutor)).collect(Collectors.toList());
 
-        return GeneralResponse.builder().statusCode(200).message("success").build();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenRun(() -> guestRepository.saveAll(guests));
     }
 
     public GeneralResponse generateOld(GenerateCardRequest request) throws Exception {

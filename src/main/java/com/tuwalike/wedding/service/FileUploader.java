@@ -1,9 +1,6 @@
 package com.tuwalike.wedding.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.time.Duration;
-
 import org.springframework.stereotype.Service;
 
 import io.minio.GetPresignedObjectUrlArgs;

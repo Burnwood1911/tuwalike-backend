@@ -5,10 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.springframework.stereotype.Service;
 
 import com.tuwalike.wedding.entity.Event;
@@ -132,9 +129,9 @@ public class EventService {
             List<MessageData> mList = guests.stream().map(g -> {
 
                 String text = String.format(
-                        "Habari %s Karibu kwenye sherehe ya binti yetu Dinah Kwilasa siku 30 Aprili 2024 bonyeza hapa %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
+                        "Habari %s Karibu kwenye kitchen Party ya Dinah Kwilasa Jumapili 28/04/2024 ukumbi ni Kilato jirani na Rupeez oil station kimara stop over kwenye mataa. bonyeza hapa %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
                         g.getName(), g.getFinalImage(), g.getQr());
-                return MessageData.builder().from("SENDOFF").to(g.getPhoneNumber()).text(text).build();
+                return MessageData.builder().from("RMNDR").to(g.getPhoneNumber()).text(text).build();
             }).collect(Collectors.toList());
 
             Messages messages = new Messages();

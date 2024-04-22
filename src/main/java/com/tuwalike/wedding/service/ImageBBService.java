@@ -1,8 +1,5 @@
 package com.tuwalike.wedding.service;
 
-import java.util.Map;
-
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.tuwalike.wedding.config.GsonConfig;
