@@ -128,10 +128,18 @@ public class EventService {
 
             List<MessageData> mList = guests.stream().map(g -> {
 
+                // String text = String.format(
+                // "Habari %s Karibu kwenye kitchen Party ya Dinah Kwilasa Jumapili 28/04/2024
+                // ukumbi ni Kilato jirani na Rupeez oil station kimara stop over kwenye mataa.
+                // bonyeza hapa %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
+                // g.getName(), g.getFinalImage(), g.getQr());
+
+                // RMNDR
+                // SENDOFF
                 String text = String.format(
-                        "Habari %s Karibu kwenye kitchen Party ya Dinah Kwilasa Jumapili 28/04/2024 ukumbi ni Kilato jirani na Rupeez oil station kimara stop over kwenye mataa. bonyeza hapa %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
+                        "Habari Ndugu %s Nakukaribisha kwenye sherehe ya kumuaga Binti yetu Dinah Kwilasa tarehe 30 April 2024 Ukumbi wa Golden Jubilee kuanzia saa 12 jioni. Bonyeza hapa. %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
                         g.getName(), g.getFinalImage(), g.getQr());
-                return MessageData.builder().from("RMNDR").to(g.getPhoneNumber()).text(text).build();
+                return MessageData.builder().from("SENDOFF").to(g.getPhoneNumber()).text(text).build();
             }).collect(Collectors.toList());
 
             Messages messages = new Messages();

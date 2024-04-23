@@ -90,7 +90,7 @@ public class ImagTestingUtileUtil {
         g2dInputImage.setFont(myCustomFont);
         g2dInputImage.setColor(Color.black);
 
-        String name = "Alex Paul Rossi";
+        String name = "Mr & Mrs Makwaia";
 
         int axisStart = 160;
         int axisEnd = 930;
@@ -99,7 +99,7 @@ public class ImagTestingUtileUtil {
 
         int stringStartPosition = calculateStringCenterPosition(axisStart, axisEnd, stringLength, charWidth);
 
-        g2dInputImage.drawString(name, stringStartPosition, 440);
+        g2dInputImage.drawString(name, stringStartPosition, 610);
 
         g2dInputImage.dispose();
 

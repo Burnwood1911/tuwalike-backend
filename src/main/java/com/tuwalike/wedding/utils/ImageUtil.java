@@ -66,9 +66,12 @@ public class ImageUtil {
         g2dInputImage.setFont(myCustomFont);
         // g2dInputImage.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font
         // here; you might need to adjust size
-        // g2dInputImage.drawString(StringUtil.capitalizeFirst(guest.getGuestType().toLowerCase()),
-        // card.getTypeX(),
-        // card.getTypeY());
+
+        if (!guest.getGuestType().isEmpty()) {
+            g2dInputImage.drawString(StringUtil.capitalizeFirst(guest.getGuestType().toLowerCase()),
+                    card.getTypeX(),
+                    card.getTypeY());
+        }
 
         // draw name
         String fontName = "fonts/" + card.getFontName() + ".ttf";
