@@ -20,9 +20,6 @@ public class Card {
 
     private String image;
 
-    @Lob
-    private String imageBase;
-
     private Integer price;
 
     private Integer nameX;

@@ -1,9 +1,12 @@
 package com.tuwalike.wedding.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
+import com.tuwalike.wedding.config.OkHttpConfig;
 import com.tuwalike.wedding.entity.Card;
 import com.tuwalike.wedding.entity.Guest;
+import com.tuwalike.wedding.models.NetworkResponse;
 import com.tuwalike.wedding.service.FileUploader;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import javax.imageio.ImageIO;
 public class ImageUtil {
 
     private final FileUploader fileUploader;
+
+    private final NetworkUtil networkUtil;
 
     public String encode(String base64Qr, String inputPath, Card card, Guest guest) throws Exception {
         // Decode the base64 String of the QR code to a BufferedImage
@@ -121,6 +126,17 @@ public class ImageUtil {
         int stringStart = axisMidpoint - stringWidth / 2; // Calculate the starting position of the string to center it
 
         return stringStart; // This is the x coordinate where the string should start to be centered
+    }
+
+    public String download(String url) {
+
+        NetworkResponse networkResponse = networkUtil.get(url, null);
+
+        byte[] imageBytes = IOUtils.toByteArray(networkResponse.getResponseBody());
+
+        String encodedString = Base64.getEncoder().encodeToString(imageBytes);
+
+        return encodedString;
     }
 
 }

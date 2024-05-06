@@ -84,11 +84,12 @@ public class CardService {
             // ImageUploadResponse imageUploadResponse =
             // imageBBService.upload(request.getImage());
 
-            String filename = UUID.randomUUID().toString().split("-")[0] + ".png";
-            String durl = fileUploader.upload(Base64.getDecoder().decode(request.getImage()), filename);
+            // String filename = UUID.randomUUID().toString().split("-")[0] + ".png";
+            // String durl =
+            // fileUploader.upload(Base64.getDecoder().decode(request.getImage()),
+            // filename);
             Card card = new Card();
-            card.setImageBase(request.getImage());
-            card.setImage(durl);
+            card.setImage(request.getImage());
             card.setPrice(request.getPrice());
             card.setNameX(request.getNameX());
             card.setNameY(request.getNameY());
@@ -187,7 +188,8 @@ public class CardService {
                 .map(g -> CompletableFuture.runAsync(() -> {
                     try {
                         String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
-                        String out = imageUtil.encode(qrImage, card.getImageBase(), card, g);
+                        String imageBase = imageUtil.download(card.getImage());
+                        String out = imageUtil.encode(qrImage, imageBase, card, g);
                         g.setFinalImage(out);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -198,48 +200,51 @@ public class CardService {
                 .thenRun(() -> guestRepository.saveAll(guests));
     }
 
-    public GeneralResponse generateOld(GenerateCardRequest request) throws Exception {
+    // public GeneralResponse generateOld(GenerateCardRequest request) throws
+    // Exception {
 
-        Optional<Event> event = eventRepository.findById(request.getEventId());
+    // Optional<Event> event = eventRepository.findById(request.getEventId());
 
-        if (event.isPresent()) {
-            Optional<Card> card = cardRepository.findById(event.get().getCardId());
+    // if (event.isPresent()) {
+    // Optional<Card> card = cardRepository.findById(event.get().getCardId());
 
-            if (card.isPresent()) {
+    // if (card.isPresent()) {
 
-                List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
+    // List<Guest> guests = guestRepository.findAllByEventId(event.get().getId());
 
-                guests.forEach(g -> {
+    // guests.forEach(g -> {
 
-                    String qrImage = "";
-                    try {
-                        qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
+    // String qrImage = "";
+    // try {
+    // qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
 
-                    try {
-                        String out = imageUtil.encode(qrImage, card.get().getImageBase(), card.get(), g);
+    // try {
+    // String out = imageUtil.encode(qrImage, card.get().getImage(), card.get(), g);
 
-                        g.setFinalImage(out);
+    // g.setFinalImage(out);
 
-                        guestRepository.save(g);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+    // guestRepository.save(g);
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // });
 
-            } else {
-                return GeneralResponse.builder().statusCode(500).message("card not found").build();
+    // } else {
+    // return GeneralResponse.builder().statusCode(500).message("card not
+    // found").build();
 
-            }
-        } else {
+    // }
+    // } else {
 
-            return GeneralResponse.builder().statusCode(500).message("event not found").build();
+    // return GeneralResponse.builder().statusCode(500).message("event not
+    // found").build();
 
-        }
+    // }
 
-        return GeneralResponse.builder().statusCode(200).message("success").build();
-    }
+    // return GeneralResponse.builder().statusCode(200).message("success").build();
+    // }
 }
