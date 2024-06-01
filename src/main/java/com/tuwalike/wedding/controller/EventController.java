@@ -48,7 +48,7 @@ public class EventController {
     }
 
     @PostMapping("dispatch")
-    public ResponseEntity<GeneralResponse> scan(@RequestBody DispatchRequest request) {
+    public ResponseEntity<GeneralResponse> dispatch(@RequestBody DispatchRequest request) {
 
         GeneralResponse result = eventService.dispatch(request);
 

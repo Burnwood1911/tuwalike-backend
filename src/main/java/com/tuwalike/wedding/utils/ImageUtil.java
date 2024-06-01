@@ -3,22 +3,24 @@ package com.tuwalike.wedding.utils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
-import com.tuwalike.wedding.config.OkHttpConfig;
 import com.tuwalike.wedding.entity.Card;
 import com.tuwalike.wedding.entity.Guest;
 import com.tuwalike.wedding.models.NetworkResponse;
 import com.tuwalike.wedding.service.FileUploader;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
+import java.util.Map;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ImageUtil {
 
@@ -26,18 +28,23 @@ public class ImageUtil {
 
     private final NetworkUtil networkUtil;
 
-    public String encode(String base64Qr, String inputPath, Card card, Guest guest) throws Exception {
+    public String encode(String base64Qr, String inputBytes, Card card, Guest guest) throws Exception {
         // Decode the base64 String of the QR code to a BufferedImage
         byte[] qrImageBytes = Base64.getDecoder().decode(base64Qr);
         ByteArrayInputStream baisQR = new ByteArrayInputStream(qrImageBytes);
         BufferedImage qrImage = ImageIO.read(baisQR);
 
         // Decode the base64 String of the input image to a BufferedImage
-        byte[] inputImageBytes = Base64.getDecoder().decode(inputPath);
+        byte[] inputImageBytes = Base64.getDecoder().decode(inputBytes);
         // Path path = Paths.get(inputPath);
         // byte[] inputImageBytes = Files.readAllBytes(path);
+
+        log.info("BYTES NOT NULL: {}", inputBytes != null);
+
         ByteArrayInputStream baisInput = new ByteArrayInputStream(inputImageBytes);
         BufferedImage inputImage = ImageIO.read(baisInput);
+
+        log.info("IMGAE NULL: {}", inputImage != null);
 
         // Resize the QR code with a white background
         BufferedImage qrImageResized = new BufferedImage(250, 250, BufferedImage.TYPE_INT_ARGB); // Use TYPE_INT_RGB to
@@ -128,15 +135,13 @@ public class ImageUtil {
         return stringStart; // This is the x coordinate where the string should start to be centered
     }
 
-    public String download(String url) {
+    public byte[] download(String url) {
 
-        NetworkResponse networkResponse = networkUtil.get(url, null);
+        NetworkResponse networkResponse = networkUtil.get(url, Map.of());
 
-        byte[] imageBytes = IOUtils.toByteArray(networkResponse.getResponseBody());
+        byte[] imageBytes = networkResponse.getResponseBody().getBytes();
 
-        String encodedString = Base64.getEncoder().encodeToString(imageBytes);
-
-        return encodedString;
+        return imageBytes;
     }
 
 }

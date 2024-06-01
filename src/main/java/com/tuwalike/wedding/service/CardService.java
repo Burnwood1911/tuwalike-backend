@@ -11,6 +11,7 @@ import com.tuwalike.wedding.repository.CardCategoryRepository;
 import com.tuwalike.wedding.repository.CardRepository;
 import com.tuwalike.wedding.repository.EventRepository;
 import com.tuwalike.wedding.repository.GuestRepository;
+import com.tuwalike.wedding.utils.ImageDownloader;
 import com.tuwalike.wedding.utils.ImageUtil;
 import com.tuwalike.wedding.utils.QRCodeGenerator;
 
@@ -18,10 +19,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -40,9 +39,9 @@ public class CardService {
 
     private final ImageUtil imageUtil;
 
-    private final FileUploader fileUploader;
-
     private final Executor asyncExecutor;
+
+    private final ImageDownloader imageDownloader;
 
     public GeneralResponse getCards() {
 
@@ -188,8 +187,9 @@ public class CardService {
                 .map(g -> CompletableFuture.runAsync(() -> {
                     try {
                         String qrImage = QRCodeGenerator.generateQRCodeImageAsBase64(g.getQr(), 250, 250);
-                        String imageBase = imageUtil.download(card.getImage());
-                        String out = imageUtil.encode(qrImage, imageBase, card, g);
+                        // byte[] imageBase = imageUtil.download(card.getImage());
+                        String xx = imageDownloader.downloadAndConvertToBase64(card.getImage());
+                        String out = imageUtil.encode(qrImage, xx, card, g);
                         g.setFinalImage(out);
                     } catch (Exception e) {
                         e.printStackTrace();

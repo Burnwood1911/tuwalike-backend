@@ -1,13 +1,5 @@
 package com.tuwalike.wedding.utils;
 
-import org.springframework.stereotype.Service;
-
-import com.tuwalike.wedding.entity.Card;
-import com.tuwalike.wedding.entity.Guest;
-import com.tuwalike.wedding.service.FileUploader;
-
-import lombok.RequiredArgsConstructor;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Base64;
-import java.util.UUID;
 import javax.imageio.ImageIO;
 
 public class ImagTestingUtileUtil {
