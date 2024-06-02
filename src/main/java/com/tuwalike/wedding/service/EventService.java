@@ -129,7 +129,7 @@ public class EventService {
             List<MessageData> mList = guests.stream().map(g -> {
 
                 String text = String.format(
-                        "Habari %s Karibu kwenye Harusi ya Aboubakar Nahaki Jumamosi 08/06/2024 ukumbi ni Mwenge Social Hall Suma JKT mwenge. bonyeza hapa %s kupata kadi yako au %s ukifika ukumbini. Karibu sana",
+                        "Habari %s Karibu kwenye Harusi ya Alexandar Magubila siku ya Jumamosi 22/06/2024 ukumbi ni Mwiga Empire Hall Tabata Bima Dar es salaam. bonyeza hapa %s kupata kadi yako au %s kama code ya mwaliko onyesha ukifika ukumbinii. Karibu sana",
                         g.getName(), g.getFinalImage(), g.getQr());
 
                 // RMNDR

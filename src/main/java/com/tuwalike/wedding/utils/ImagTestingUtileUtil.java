@@ -90,7 +90,7 @@ public class ImagTestingUtileUtil {
 
         int stringStartPosition = calculateStringCenterPosition(axisStart, axisEnd, stringLength, charWidth);
 
-        g2dInputImage.drawString(name, stringStartPosition, 610);
+        g2dInputImage.drawString(name, stringStartPosition, 670);
 
         g2dInputImage.dispose();
 

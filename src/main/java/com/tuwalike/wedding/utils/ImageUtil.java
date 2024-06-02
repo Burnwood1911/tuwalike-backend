@@ -1,6 +1,5 @@
 package com.tuwalike.wedding.utils;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
 import com.tuwalike.wedding.entity.Card;
@@ -9,7 +8,6 @@ import com.tuwalike.wedding.models.NetworkResponse;
 import com.tuwalike.wedding.service.FileUploader;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +18,6 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ImageUtil {
 
@@ -39,12 +36,8 @@ public class ImageUtil {
         // Path path = Paths.get(inputPath);
         // byte[] inputImageBytes = Files.readAllBytes(path);
 
-        log.info("BYTES NOT NULL: {}", inputBytes != null);
-
         ByteArrayInputStream baisInput = new ByteArrayInputStream(inputImageBytes);
         BufferedImage inputImage = ImageIO.read(baisInput);
-
-        log.info("IMGAE NULL: {}", inputImage != null);
 
         // Resize the QR code with a white background
         BufferedImage qrImageResized = new BufferedImage(250, 250, BufferedImage.TYPE_INT_ARGB); // Use TYPE_INT_RGB to
