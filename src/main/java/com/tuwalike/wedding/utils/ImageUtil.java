@@ -55,8 +55,11 @@ public class ImageUtil {
         g2d.dispose();
 
         // Calculate the position at the bottom left corner of the input image
-        int x = 0;
-        int y = inputImage.getHeight() - qrImageResized.getHeight();
+        // int x = 0;
+        // int y = inputImage.getHeight() - qrImageResized.getHeight();
+
+        int x = inputImage.getWidth() / 2 - (qrImage.getWidth() / 2);
+        int y = 1350;
 
         // Draw the resized QR code with a white background on the input image
         Graphics2D g2dInputImage = inputImage.createGraphics();
@@ -72,11 +75,11 @@ public class ImageUtil {
         // g2dInputImage.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font
         // here; you might need to adjust size
 
-        if (!guest.getGuestType().isEmpty()) {
-            g2dInputImage.drawString(StringUtil.capitalizeFirst(guest.getGuestType().toLowerCase()),
-                    card.getTypeX(),
-                    card.getTypeY());
-        }
+        // if (!guest.getGuestType().isEmpty()) {
+        // g2dInputImage.drawString(StringUtil.capitalizeFirst(guest.getGuestType().toLowerCase()),
+        // card.getTypeX(),
+        // card.getTypeY());
+        // }
 
         // draw name
         String fontName = "fonts/" + card.getFontName() + ".ttf";

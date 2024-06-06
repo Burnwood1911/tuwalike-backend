@@ -57,8 +57,11 @@ public class ImagTestingUtileUtil {
         g2d.dispose();
 
         // Calculate the position at the bottom left corner of the input image
-        int x = 0;
-        int y = inputImage.getHeight() - qrImageResized.getHeight();
+        // int x = 0;
+        // int y = inputImage.getHeight() - qrImageResized.getHeight();
+
+        int x = inputImage.getWidth() / 2 - (qrImage.getWidth() / 2);
+        int y = 1350;
 
         // Draw the resized QR code with a white background on the input image
         Graphics2D g2dInputImage = inputImage.createGraphics();
@@ -69,7 +72,7 @@ public class ImagTestingUtileUtil {
 
         // Assuming you've placed the font file in 'src/main/resources/fonts' and it's
         // named 'YourGoogleFont-Regular.ttf'
-        Font myCustomFont = CustomFontUtil.loadFont("fonts/GreatVibes-Regular.ttf", 60f);
+        Font myCustomFont = CustomFontUtil.loadFont("fonts/Proxima-Nova-Regular.ttf", 60f);
         g2dInputImage.setFont(myCustomFont);
         // g2dInputImage.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font
         // here; you might need to adjust size
@@ -90,7 +93,7 @@ public class ImagTestingUtileUtil {
 
         int stringStartPosition = calculateStringCenterPosition(axisStart, axisEnd, stringLength, charWidth);
 
-        g2dInputImage.drawString(name, stringStartPosition, 670);
+        g2dInputImage.drawString(name, stringStartPosition, 600);
 
         g2dInputImage.dispose();
 

@@ -16,6 +16,7 @@ import com.tuwalike.wedding.utils.ImageUtil;
 import com.tuwalike.wedding.utils.QRCodeGenerator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CardService {
 
@@ -190,6 +192,8 @@ public class CardService {
                         // byte[] imageBase = imageUtil.download(card.getImage());
                         String xx = imageDownloader.downloadAndConvertToBase64(card.getImage());
                         String out = imageUtil.encode(qrImage, xx, card, g);
+
+                        log.info("IMAGE URL OUT IS : {}", out);
                         g.setFinalImage(out);
                     } catch (Exception e) {
                         e.printStackTrace();
